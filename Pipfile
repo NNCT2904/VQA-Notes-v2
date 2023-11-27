@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+matplotlib = "*"
+ipykernel = "*"
+jupyter = "*"
+jupyterlab = "*"
+appnope = "*"
+orqviz = "*"
+qiskit-machine-learning = {extras = ["torch", "torchvision"], version = "*"}
+qiskit-ibm-runtime = "*"
+python-dotenv = "*"
+torch = "<=1.11.0"
+scikit-learn = "*"
+torchvision = "*"
+qiskit = {extras = ["visualization"], version = "*"}
+pandas = "*"
+torchsummary = "*"
+
+[dev-packages]
+autopep8 = "*"
+
+[requires]
+python_version = "3.10"
