@@ -5,115 +5,17 @@ from qiskit.opflow import Gradient
 from qiskit_machine_learning.neural_networks import EstimatorQNN
 from qiskit_machine_learning.algorithms.classifiers import NeuralNetworkClassifier
 from qiskit.quantum_info import SparsePauliOp
+from qiskit_machine_learning.connectors import TorchConnector
 
 import copy, math
 from sklearn.metrics import accuracy_score
 import torch
+from torch import tensor, optim
 
-from Components.circuits import preTrainedBlockGenerator, layerwise_training, featureMapGenerator, AnsatzGenerator
 from Components.utils import classification_callback
 
 import time
 from IPython.display import clear_output
-
-def create_qnn(feature_dim, reps, entanglement, operator):
-    feature_map = featureMapGenerator(feature_dim)
-    ansatz = AnsatzGenerator(feature_dim, reps=reps, entanglement=entanglement)
-    circuit = feature_map.compose(ansatz)
-
-    qnn = EstimatorQNN(
-        circuit=circuit,
-        observables=SparsePauliOp.from_operator(operator),
-        input_params=list(feature_map.parameters),
-        weight_params=list(ansatz.parameters),
-        gradient=Gradient(),
-    )
-
-    print(f'num_weight (d): {qnn.num_weights}')
-
-    return qnn
-
-def create_identity_blocks_qnn(feature_dim, num_blocks, entanglement, operator):
-    feature_map = featureMapGenerator(feature_dim)
-
-    identity_block = preTrainedBlockGenerator(feature_dim, num_blocks, entanglement=entanglement)
-
-    ansatz = identity_block['circuit']
-    initial_point = list(identity_block['params_values'].values())
-
-    circuit = feature_map.compose(ansatz)
-
-    qnn = EstimatorQNN(
-        circuit=circuit,
-        observables=SparsePauliOp.from_operator(operator),
-        input_params=list(feature_map.parameters),
-        weight_params=list(ansatz.parameters),
-        gradient=Gradient(),
-    )
-
-    print(f'num_weight (d): {qnn.num_weights}')
-
-    return qnn, initial_point
-
-def sampling_experiment(qnn, max_iter, loss, train_features, test_features, train_labels, test_labels, initial_point = None):
-    callback_results = []
-    scores = []
-
-    for i in range(10):
-        print(f'Sample number {i+1}')
-
-        classifier = NeuralNetworkClassifier(
-            qnn, 
-            optimizer=COBYLA(maxiter=max_iter),
-            loss=loss,
-            initial_point=initial_point
-        )
-
-
-        callback = classification_callback()
-
-        classifier.callback = callback.collect
-
-        classifier.fit(train_features, train_labels)
-        score = classifier.score(test_features, test_labels)
-
-        callback_results.append(callback)
-        scores.append(score)
-
-        clear_output(wait=True)
-
-    return callback_results, scores
-
-def sampling_ll_experiment(qnn, max_iter, loss, train_features, test_features, train_labels, test_labels, initial_point = None):
-    callback_results = []
-    scores = []
-
-    for i in range(10):
-        print(f'Sample number {i+1}')
-
-        initial_point = layerwise_training(ansatz_method_2, MAX_REPS, COBYLA(maxiter=50), q_instance)
-
-        classifier = NeuralNetworkClassifier(
-            qnn, 
-            optimizer=COBYLA(maxiter=max_iter),
-            loss=loss,
-            initial_point=initial_point
-        )
-
-
-        callback = classification_callback()
-
-        classifier.callback = callback.collect
-
-        classifier.fit(train_features, train_labels)
-        score = classifier.score(test_features, test_labels)
-
-        callback_results.append(callback)
-        scores.append(score)
-
-        clear_output(wait=True)
-
-    return callback_results, scores
 
 @torch.no_grad()
 def predict_batch(dataloader, model):
@@ -137,7 +39,7 @@ def predict(data, model):
 
 
 
-def train_batch(model, epochs, train_dataloader, val_dataloader, optimizer, loss_function):
+def train_batch(model: TorchConnector, epochs:int, train_dataloader, val_dataloader, optimizer, loss_function):
     accuracy_train = []
     accuracy_test = []
     losses = []
@@ -165,7 +67,7 @@ def train_batch(model, epochs, train_dataloader, val_dataloader, optimizer, loss
             print ("{:<10} {:<10} {:<20} {:<16} {:<16}".format(f'[ {epoch} ]', it, loss.detach().flatten()[0].numpy().round(5), a_train.round(5), a_test.round(5)))
     return model, losses, accuracy_train, accuracy_test, weights
 
-def train(model, epochs, X_train, y_train, X_val, y_val, optimizer, loss_function):
+def train(model: TorchConnector, epochs:int, X_train :tensor, y_train:tensor, X_val:tensor, y_val:tensor, optimizer: optim.Optimizer, loss_function:torch.nn.modules.loss._Loss):
     accuracy_train = []
     accuracy_test = []
     losses = []

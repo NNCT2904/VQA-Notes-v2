@@ -1,56 +1,58 @@
 import numpy as np
 from qiskit.opflow import Gradient, CircuitSampler, StateFn, PauliExpectation
-from qiskit_ibm_runtime import QiskitRuntimeService, Sampler, Estimator
+from qiskit.circuit import QuantumCircuit
+from qiskit.primitives import Estimator
+from qiskit_algorithms.gradients import ParamShiftEstimatorGradient
 from matplotlib import pyplot as plt
 
 from GLOBAL_CONFIG import *
 
 
-def sampleGradientRuntime(ansatzes, operators, ansatzes_parameters=[]):
-    ansatzes_to_run = []
-    operator_to_run = []
-    parameters_to_run = []
+# def sampleGradientRuntime(ansatzes, operators, ansatzes_parameters=[]):
+#     ansatzes_to_run = []
+#     operator_to_run = []
+#     parameters_to_run = []
 
-    # 100 parameters for ansatzes
-    num_values = 100
+#     # 100 parameters for ansatzes
+#     num_values = 100
 
-    # If no parameters are given, create 100 random parameters, or else use the given parameters to scan current gradient
-    if len(ansatzes_parameters) == 0:
-        for i in range(len(ansatzes)):
-            for j in range(num_values):
-                ansatzes_to_run.append(ansatzes[i])
-                operator_to_run.append(operators[i])
-                parameters_to_run.append(np.random.uniform(0, np.pi, ansatzes[i].num_parameters))
-    else:
-        for i in range(len(ansatzes)):
-            for j in range(num_values):
-                points = []
-                for k in range(ansatzes[i].num_parameters):
-                    low = ansatzes_parameters[i][k] - np.pi/2
-                    high = ansatzes_parameters[i][k] + np.pi/2
-                    points.append(np.random.uniform(low, high))
-                parameters_to_run.append(points)
-                ansatzes_to_run.append(ansatzes[i])
-                operator_to_run.append(operators[i])
+#     # If no parameters are given, create 100 random parameters, or else use the given parameters to scan current gradient
+#     if len(ansatzes_parameters) == 0:
+#         for i in range(len(ansatzes)):
+#             for j in range(num_values):
+#                 ansatzes_to_run.append(ansatzes[i])
+#                 operator_to_run.append(operators[i])
+#                 parameters_to_run.append(np.random.uniform(0, np.pi, ansatzes[i].num_parameters))
+#     else:
+#         for i in range(len(ansatzes)):
+#             for j in range(num_values):
+#                 points = []
+#                 for k in range(ansatzes[i].num_parameters):
+#                     low = ansatzes_parameters[i][k] - np.pi/2
+#                     high = ansatzes_parameters[i][k] + np.pi/2
+#                     points.append(np.random.uniform(low, high))
+#                 parameters_to_run.append(points)
+#                 ansatzes_to_run.append(ansatzes[i])
+#                 operator_to_run.append(operators[i])
     
-    # Estimate all ansatzes with provided parameters
-    with Estimator(circuits=ansatzes_to_run, observables=operator_to_run, service=service, options=options) as estimator:
+#     # Estimate all ansatzes with provided parameters
+#     with Estimator(circuits=ansatzes_to_run, observables=operator_to_run, service=service, options=options) as estimator:
         
-        estimator_results = estimator(
-            circuits=ansatzes_to_run,
-            observables=operator_to_run,
-            parameter_values=parameters_to_run
-        )
+#         estimator_results = estimator(
+#             circuits=ansatzes_to_run,
+#             observables=operator_to_run,
+#             parameter_values=parameters_to_run
+#         )
 
-    # Get the expectation values for each ansatz, each 100 entry is one ansatz
-    parsed_estimator_result = []
-    for i in range(0, len(estimator_results.values), num_values):
-        parsed_estimator_result.append(estimator_results.values[i:i+num_values])
+#     # Get the expectation values for each ansatz, each 100 entry is one ansatz
+#     parsed_estimator_result = []
+#     for i in range(0, len(estimator_results.values), num_values):
+#         parsed_estimator_result.append(estimator_results.values[i:i+num_values])
         
-    print(f"Number of ansatzes, parameters, operator to run: {len(ansatzes_to_run)}")
-    return parsed_estimator_result
+#     print(f"Number of ansatzes, parameters, operator to run: {len(ansatzes_to_run)}")
+#     return parsed_estimator_result
 
-def sampleAnsatz(estimator, ansatzes, operators, ansatzes_parameters=[],):
+def sampleAnsatz(estimator: Estimator, ansatzes:list[QuantumCircuit], operators:list[SparsePauliOp], ansatzes_parameters:list[float|np.float64]=[],):
     ''' 
     This function sample the ansatz with a range of parameters. The result can be used to calculate the gradient of the ansatz.
 
@@ -108,7 +110,7 @@ def sampleAnsatz(estimator, ansatzes, operators, ansatzes_parameters=[],):
     return parsed_estimator_result
 
 
-def getVariance(data, num_qubits):
+def getVariance(data:list[float|np.float], num_qubits:list[int]):
     '''
     Calculate the gradient of the given data, then calculate and the variance of the gradient.
     This function will also draw a graph of variance line.

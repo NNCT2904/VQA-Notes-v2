@@ -1,9 +1,16 @@
 import numpy as np
 from qiskit.circuit import QuantumCircuit, Parameter
 from qiskit.opflow import PauliExpectation, CircuitSampler, StateFn, Gradient, Z, X, I
-from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
 
-def circuitBuilder(feature_map, ansatz, feature_map_position = 'middle'):
+from qiskit.primitives import Estimator, Sampler
+from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
+from qiskit.quantum_info import SparsePauliOp, Statevector
+from qiskit.algorithms.gradients import ParamShiftEstimatorGradient
+from qiskit.algorithms import optimizers
+
+from GLOBAL_CONFIG import *
+
+def circuitBuilder(feature_map:QuantumCircuit, ansatz:QuantumCircuit, feature_map_position = 'middle'):
     ''' Generate a circuit with custom ansatz width and feature map width
 
     Args: 
@@ -16,8 +23,6 @@ def circuitBuilder(feature_map, ansatz, feature_map_position = 'middle'):
     '''
 
     num_qubits = ansatz.num_qubits
-
-    
 
     qc = QuantumCircuit(num_qubits)
 
@@ -39,14 +44,14 @@ def circuitBuilder(feature_map, ansatz, feature_map_position = 'middle'):
 
 
 
-def featureMapGenerator(num_qubits):
+def featureMapGenerator(num_qubits:int):
     feature_map = ZZFeatureMap(feature_dimension=num_qubits,
                                reps=1
                                ).decompose()
     return feature_map
 
 
-def AnsatzGenerator(num_qubits, reps=1, entanglement='full'):
+def AnsatzGenerator(num_qubits:int, reps:int=1, entanglement:str='full'):
     ansatz = RealAmplitudes(
         num_qubits=num_qubits,
         entanglement=entanglement,
@@ -56,7 +61,7 @@ def AnsatzGenerator(num_qubits, reps=1, entanglement='full'):
 
     return ansatz
 
-def preTrainedBlockGenerator(num_qubits, num_blocks, overlay=0, skip_last_barrier=False, insert_barriers=False, entanglement='linear'):
+def preTrainedBlockGenerator(num_qubits:int, num_blocks:int, overlay:int=0, skip_last_barrier:bool=False, insert_barriers:bool=False, entanglement:str='linear'):
     ''' Generates an identity block ansatz 
     
     Argumens:
@@ -223,6 +228,18 @@ def preTrainedBlockGenerator_old(num_qubits, num_blocks, skip_final_rotation_lay
         'params_values': params_values
     }
 
+def LLMinimizePrimitives(circuit, optimiser, sampler: Sampler):
+    initial_point = np.zeros(circuit.num_parameters)
+
+    operator = LOCAL_OPERATOR
+
+    expectation = Statevector(circuit).evolve(operator)
+
+    gradient = ParamShiftEstimatorGradient(expectation)
+
+    def loss(x):
+        values = dict(zip(circuit.parameters, x))
+        return np.real(sampler.run(expectation))
 
 def LLMinimize(circuit, optimizer, q_instance):
     initial_point = np.zeros(circuit.num_parameters)
@@ -274,7 +291,7 @@ def LLMinimize_old(circuit, optimizer, q_instance):
     return optimizer.minimize(loss, jac=gradient, x0=initial_point)
 
 
-def layerwise_training(ansatz, max_num_layers, optimizer, q_instance):
+def layerwise_training(ansatz:QuantumCircuit, max_num_layers:int, optimizer:optimizers, q_instance):
     optimal_parameters = []
 
     for reps in range(1, max_num_layers+1):

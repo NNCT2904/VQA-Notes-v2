@@ -8,7 +8,7 @@ import numpy as np
 import GLOBAL_CONFIG
 
 
-def cancer_data(PCA_n=GLOBAL_CONFIG.FEATURE_DIM, scale=True, split=True):
+def cancer_data(PCA_n:int=GLOBAL_CONFIG.FEATURE_DIM, scale=True, split=True):
     X, y = datasets.load_breast_cancer(return_X_y=True)
 
     if PCA_n:
@@ -31,6 +31,7 @@ def cancer_data(PCA_n=GLOBAL_CONFIG.FEATURE_DIM, scale=True, split=True):
     print(f'Training set: {len(train_features)} samples')
     print(f'Testing set: {len(test_features)} samples')
     print(f'Number of features: {train_features.shape[-1]}')
+    print(f'PCA Explained variance: {pca.explained_variance_}')
     print(f'Classes:{np.unique(y)}; Encoded as: {np.unique(train_labels)}')
 
     return train_features, test_features, train_labels, test_labels

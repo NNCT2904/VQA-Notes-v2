@@ -149,6 +149,23 @@ def result_to_objfun_dataframes(callback_results):
         
     return dataframes
 
+def plot_method_data(data, title='Instance Losses', dlabel='inst#', xlabel='Loss', ylabel='Iteration'):
+    # create figure and axis
+    fig, ax = plt.subplots()
+    fig.set_figheight(4)
+    fig.set_figwidth(8)
+    
+    # setting the axis' labels
+    ax.set_ylabel(xlabel)
+    ax.set_xlabel(ylabel)
+    
+    # Plot data
+    for i in range(len(data)):
+        data[i].T.plot(ax=ax, label=f'inst# {i}', figsize=(5, 3))
+    ax.legend([f'{dlabel} {i}' for i in range(len(data))])
+    plt.title(title)
+    plt.show()  
+
 def save_results(callback_results = None, objfn_val = None, accuracy_train = None, accuracy_test = None, weights = None):
     if callback_results:
         for c in range(len(callback_results)):
