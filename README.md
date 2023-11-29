@@ -15,19 +15,13 @@ This Jupyter Notebook project practices the experiment as given in the research 
   - [Visual Studio Code](#visual-studio-code)
 
 # Requirements
-- [Python 3.10.4](https://www.python.org/downloads/release/python-3104/)
+- [Python 3.10.9](https://www.python.org/downloads/release/python-3109/)
 - [pip 22.0.4](https://pypi.org/project/pip/) for package management
 - [pipenv](https://pipenv.pypa.io/en/latest/) for virtual environment and package management
 - Optional: [Pyenv](https://github.com/pyenv/pyenv) for python version control
 
 ## For CONDA users
-Install these packages:
-- ipykernel, jupyter, jupyterlab, 
-- matplotlib, numpy, pandas
-- qiskit, qiskit-machine-learning, qiskit-ibm-runtime
-- scikit-learn
-- torch, torchvision, torchsummary
-- python-dotenv
+See the `Pipfile` for the required packages
 
 # Onboarding - Setup Project
 We assume that you have the above requirements. Follow the instructions belows to install this python project.
@@ -37,20 +31,20 @@ Make sure that you have access to this repository, and your computer have the cr
 From your desired folder, for example, `/Documets/Code`, open a terminal and run:
 
 ```shell
-git clone https://github.com/NNCT2904/VQA-Capacity-Notes.git
+git clone https://github.com/NNCT2904/VQA-Notes-v2.git
 ```
 
 This command will download this repository to your computer as a folder named `VQA-Capacity-Notes`.
 
 ## Install python dependencies
-You can install python 3.10.4 and set it as global python with `pyenv`:
+You can install python 3.10.9 and set it as global python with `pyenv`:
 
 ```shell
 # Install python 3.10.4
-pyenv install 3.10.4
+pyenv install 3.10.9
 
 # Set 3.10.4 as global
-pyenv global 3.10.4
+pyenv global 3.10.9
 ```
 
 After cloning the repository, we need to install nessessary packages to run this notebook. 
@@ -72,7 +66,7 @@ Remember to use the correct python version and activate the environment first!
 
 Run this command if you are not in the correct python version:
 ```shell
-pyenv global 3.10.4
+pyenv global 3.10.9
 ```
 
 Run this command if you are not in the python environment:
@@ -81,7 +75,9 @@ Run this command if you are not in the python environment:
 pipenv shell
 ```
 
-Create an `.env` file in the root folder to store IBMQ api key
+[Runing Online not supported for now]
+
+To run the notebook with IBM devices, create an `.env` file in the root folder to store IBMQ api key
 ```
 TOKEN=paste your token here
 HUB=your hub
@@ -119,6 +115,3 @@ To check the environment name, run the command:
 ```shell
 pipenv --venv
 ```
-
-<img src="./setupGuidelines/venv.png" width="100%">
-<img src="./setupGuidelines/correctkernel.png" width="100%">

@@ -6,10 +6,6 @@ name = "pypi"
 [packages]
 numpy = "*"
 matplotlib = "*"
-ipykernel = "*"
-jupyter = "*"
-jupyterlab = "*"
-appnope = "*"
 orqviz = "*"
 qiskit-machine-learning = {extras = ["torch", "torchvision"], version = "*"}
 qiskit-ibm-runtime = "*"
@@ -20,9 +16,14 @@ torchvision = "*"
 qiskit = {extras = ["visualization"], version = "*"}
 pandas = "*"
 torchsummary = "*"
+qiskit-aer = "*"
 
 [dev-packages]
 autopep8 = "*"
+ipykernel = "*"
+jupyter = "*"
+jupyterlab = "*"
+appnope = "*"
 
 [requires]
 python_version = "3.10"

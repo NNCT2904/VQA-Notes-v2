@@ -5,6 +5,7 @@ from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
 
 def circuitBuilder(feature_map, ansatz, feature_map_position = 'middle'):
     ''' Generate a circuit with custom ansatz width and feature map width
+
     Args: 
         feature_map - The Feature map
         ansatz - The Ansatz, assuming that the number of qubits is larger than the feature map
@@ -57,6 +58,7 @@ def AnsatzGenerator(num_qubits, reps=1, entanglement='full'):
 
 def preTrainedBlockGenerator(num_qubits, num_blocks, overlay=0, skip_last_barrier=False, insert_barriers=False, entanglement='linear'):
     ''' Generates an identity block ansatz 
+    
     Argumens:
         num_qubits - Number of qubits for ansatz construction
         num_blocks - Number of identity blocks
