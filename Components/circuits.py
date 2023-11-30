@@ -10,7 +10,7 @@ from qiskit.algorithms import optimizers
 
 from GLOBAL_CONFIG import *
 
-def circuitBuilder(feature_map:QuantumCircuit, ansatz:QuantumCircuit, feature_map_position = 'middle'):
+def circuitBuilder(feature_map:QuantumCircuit, ansatz:QuantumCircuit, feature_map_position:str = 'middle'):
     ''' Generate a circuit with custom ansatz width and feature map width
 
     Args: 
@@ -51,7 +51,7 @@ def featureMapGenerator(num_qubits:int):
     return feature_map
 
 
-def AnsatzGenerator(num_qubits:int, reps:int=1, entanglement:str='full'):
+def AnsatzGenerator(num_qubits:int, reps:int=1, entanglement:str='linear'):
     ansatz = RealAmplitudes(
         num_qubits=num_qubits,
         entanglement=entanglement,

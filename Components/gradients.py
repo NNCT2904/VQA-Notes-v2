@@ -1,6 +1,6 @@
 import numpy as np
-from qiskit.opflow import Gradient, CircuitSampler, StateFn, PauliExpectation
 from qiskit.circuit import QuantumCircuit
+import qiskit.primitives
 from qiskit.primitives import Estimator
 from qiskit_algorithms.gradients import ParamShiftEstimatorGradient
 from matplotlib import pyplot as plt
@@ -52,7 +52,7 @@ from GLOBAL_CONFIG import *
 #     print(f"Number of ansatzes, parameters, operator to run: {len(ansatzes_to_run)}")
 #     return parsed_estimator_result
 
-def sampleAnsatz(estimator: Estimator, ansatzes:list[QuantumCircuit], operators:list[SparsePauliOp], ansatzes_parameters:list[float|np.float64]=[],):
+def sampleAnsatz(estimator: qiskit.primitives.Estimator, ansatzes:list[QuantumCircuit], operators:list[SparsePauliOp], ansatzes_parameters:list[float|np.float64]=[]) -> list:
     ''' 
     This function sample the ansatz with a range of parameters. The result can be used to calculate the gradient of the ansatz.
 
@@ -110,7 +110,7 @@ def sampleAnsatz(estimator: Estimator, ansatzes:list[QuantumCircuit], operators:
     return parsed_estimator_result
 
 
-def getVariance(data:list[float|np.float], num_qubits:list[int]):
+def getVariance(data:list[float|np.float64], num_qubits:list[int]):
     '''
     Calculate the gradient of the given data, then calculate and the variance of the gradient.
     This function will also draw a graph of variance line.
@@ -126,14 +126,16 @@ def getVariance(data:list[float|np.float], num_qubits:list[int]):
     for d in data:
         g.append(np.gradient(d))
 
-    fit = np.polyfit(num_qubits, np.log(np.var(g, axis=1)), deg=1)
+    variance = np.var(g, axis=1)
+
+    fit = np.polyfit(num_qubits, np.log(variance), deg=1)
     x = np.linspace(num_qubits[0], num_qubits[-1], 200)
 
     plt.figure(figsize=(12, 6))
-    plt.semilogy(num_qubits, np.var(g, axis=1), 'o-', label='measured variance')
+    plt.semilogy(num_qubits, variance, 'o-', label='measured variance')
     plt.semilogy(x, np.exp(fit[0] * x + fit[1]), 'r--', label=f'exponential fit w/ {fit[0]:.2f}')
     plt.xlabel('Numer of qubits')
     plt.ylabel(r'$\mathrm{Var}[\partial_{\theta 1} \langle E(\theta) \rangle]$')
     plt.legend(loc='best')
 
-    return np.var(g, axis=1)
+    return variance

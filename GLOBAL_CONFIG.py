@@ -5,8 +5,8 @@ FEATURE_DIM = 4
 MAX_ITER = 10
 MAX_INST = 10
 
-MAX_QUBITS = 9
-MAX_REPS = 9
+MAX_QUBITS = 12
+MAX_REPS = 12
 MIN_REPS = 1
 MAX_IDENTITIES_BLOCKS = 2  # <---- Number of identity blocks, depth values of identity blocks is close to that of normal ansatz (5 qubits)
 ENTANGLEMENT = 'linear'
