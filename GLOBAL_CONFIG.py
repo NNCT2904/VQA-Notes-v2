@@ -18,7 +18,8 @@ MAX_INST = 10
 MAX_QUBITS = 12
 MAX_REPS = 12
 MIN_REPS = 1
-MAX_IDENTITIES_BLOCKS = 2  # <---- Number of identity blocks, depth values of identity blocks is close to that of normal ansatz (5 qubits)
+MAX_IDENTITIES_BLOCKS = 3  # <---- Number of identity blocks, depth values of identity blocks is close to that of normal ansatz 
+IDENTITY_BLOCKS_OVERLAY = 3
 ENTANGLEMENT = 'linear'
 
 '''Configure Measurement for Quantum Circuit, support different types of Operators, and their position'''
