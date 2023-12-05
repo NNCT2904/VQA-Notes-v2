@@ -136,6 +136,7 @@ def getVariance(data:list[float|np.float64], num_qubits:list[int]):
     plt.semilogy(x, np.exp(fit[0] * x + fit[1]), 'r--', label=f'exponential fit w/ {fit[0]:.2f}')
     plt.xlabel('Numer of qubits')
     plt.ylabel(r'$\mathrm{Var}[\partial_{\theta 1} \langle E(\theta) \rangle]$')
+    plt.xticks(num_qubits)
     plt.legend(loc='best')
 
     return variance
