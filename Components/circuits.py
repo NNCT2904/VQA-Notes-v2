@@ -7,6 +7,7 @@ from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
 from qiskit.quantum_info import SparsePauliOp, Statevector
 from qiskit.algorithms.gradients import ParamShiftEstimatorGradient
 from qiskit.algorithms import optimizers
+from qiskit.algorithms.optimizers import COBYLA
 
 from GLOBAL_CONFIG import *
 
@@ -40,9 +41,6 @@ def circuitBuilder(feature_map:QuantumCircuit, ansatz:QuantumCircuit, feature_ma
     qc.append(ansatz, qargs=range(0, num_qubits))
 
     return qc
-
-
-
 
 def featureMapGenerator(num_qubits:int):
     feature_map = ZZFeatureMap(feature_dimension=num_qubits,
@@ -228,18 +226,47 @@ def preTrainedBlockGenerator_old(num_qubits, num_blocks, skip_final_rotation_lay
         'params_values': params_values
     }
 
-def LLMinimizePrimitives(circuit, optimiser, sampler: Sampler):
+def LLMinimizePrimitives(circuit: QuantumCircuit, optimiser:optimizers, estimator: Estimator):
+    operator = SparsePauliOp.from_list([('I' * (circuit.num_qubits - 2)+'Z'*2, 1)])
+
     initial_point = np.zeros(circuit.num_parameters)
 
-    operator = LOCAL_OPERATOR
+    bouned_circuit = circuit.assign_parameters(initial_point)
 
-    expectation = Statevector(circuit).evolve(operator)
+    expectation = Statevector(bouned_circuit)
+    
+    state = expectation.evolve(operator)
 
-    gradient = ParamShiftEstimatorGradient(expectation)
+    PShiftGradient = ParamShiftEstimatorGradient(state)
 
     def loss(x):
-        values = dict(zip(circuit.parameters, x))
-        return np.real(sampler.run(expectation))
+        # values = dict(zip(circuit.parameters, x))
+        return np.real(estimator.run([circuit], observables=[operator], parameter_values=[x]).result().values)
+    
+    def gradient(x):
+        # values = dict(zip(circuit.parameters, x))
+        return np.real(PShiftGradient.run(parameter_values=[x]))
+
+    res = optimiser.minimize(fun=loss, jac=gradient, x0=initial_point)
+
+    return res
+
+
+def LayerwiseTrainingPrimitives(ansatz: QuantumCircuit, max_num_layers: int, optimizer = COBYLA(maxiter=5), estimator = Estimator()):
+    optimal_parameters = []
+
+    for reps in range(1, max_num_layers+1):
+        ansatz.reps = reps
+
+        # bind already optimized parameters
+        values_dict = dict(zip(ansatz.parameters, optimal_parameters))
+        partially_bound = ansatz.assign_parameters(values_dict)
+
+        res = LLMinimizePrimitives(partially_bound, optimizer, estimator)
+        print('Circuit rep:', reps, 'best value:', res.fun)
+        optimal_parameters += list(res.x)
+
+    return optimal_parameters
 
 def LLMinimize(circuit, optimizer, q_instance):
     initial_point = np.zeros(circuit.num_parameters)
