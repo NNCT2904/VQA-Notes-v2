@@ -37,4 +37,4 @@ LOCAL_OPERATOR_TOP = SparsePauliOp.from_list([('Z'*LOCAL_MEASUREMENT+'I' * (MAX_
 # [...IZZI...]
 LOCAL_OPERATOR_MIDDLE = SparsePauliOp.from_list([('I'*(np.floor(MAX_QUBITS/2)-np.floor(LOCAL_MEASUREMENT/2)).astype(int)+'Z'*LOCAL_MEASUREMENT + 'I'*(MAX_QUBITS-(np.floor(MAX_QUBITS/2)-np.floor(LOCAL_MEASUREMENT/2)).astype(int)-LOCAL_MEASUREMENT),1)])
 
-LOG_PATH = './Logs-MNIST-v4'
+LOG_PATH = './Logs-cancer-v4'
