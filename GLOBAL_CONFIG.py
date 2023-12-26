@@ -11,13 +11,13 @@ import numpy as np
 '''Configure Dataset'''
 DATA_SIZE = 500
 FEATURE_DIM = 4
-MAX_ITER = 10
+MAX_ITER = 100
 MAX_INST = 10
 
 '''Configure Quantum Circuit properties'''
 MAX_QUBITS = 12
 MAX_REPS = 12
-MIN_REPS = 1
+MIN_REPS = 2
 MAX_IDENTITIES_BLOCKS = 3  # <---- Number of identity blocks, depth values of identity blocks is close to that of normal ansatz 
 IDENTITY_BLOCKS_OVERLAY = 3
 ENTANGLEMENT = 'linear'
