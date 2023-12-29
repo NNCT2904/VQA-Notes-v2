@@ -58,7 +58,8 @@ def plot_method_data(losses, title='Instance Losses', dlabel='inst#', xlabel='Lo
 
 ### Reads in all methods records from the log folder
 def logs_to_methods_data(log_path, methods=['m0', 'm1', 'm2', 'm3']):
-    
+
+    variances = {}
     weights = {}
     losses = {}
     scores_train = {}
@@ -79,6 +80,7 @@ def logs_to_methods_data(log_path, methods=['m0', 'm1', 'm2', 'm3']):
             if (not exists(f'{log_path}/{m}')):
                 print(f'{" "*3}Missing method: {m}')
             else:
+                variances[m] = []
                 weights[m] = []
                 losses[m] = []
                 scores_train[m] = []
@@ -95,6 +97,9 @@ def logs_to_methods_data(log_path, methods=['m0', 'm1', 'm2', 'm3']):
                     else:
                         print(f'{" "*6}Found method instance: {m}-{inst}')
                         inst_valid = True
+                        if (not exists(f'{log_path}/{m}/{m}-{inst}-Variances.csv')):
+                            print(f'{" "*9}... Missing variances file: {m}-{inst}-Variances.csv')
+                            inst_valid = False
                         if (not exists(f'{log_path}/{m}/{m}-{inst}-Weights.csv')):
                             print(f'{" "*9}... Missing weight file: {m}-{inst}-Weights.csv')
                             inst_valid = False
@@ -110,6 +115,10 @@ def logs_to_methods_data(log_path, methods=['m0', 'm1', 'm2', 'm3']):
                         else:
                             new_inst_no += 1
                             print(f'{" "*9}... Instance {m}-{inst} renumbered as {new_inst_no}')
+
+                            # Get variances
+                            inst_variances = pd.read_csv(f'{log_path}/{m}/{m}-{inst}-Variances.csv', index_col=[0])
+                            variances[m].append(pd.DataFrame(inst_variances['0'].values).T)
                             
                             # Get loss functions
                             inst_loss = pd.read_csv(f'{log_path}/{m}/{m}-{inst}-LossFunction.csv', index_col=[0])
@@ -131,7 +140,7 @@ def logs_to_methods_data(log_path, methods=['m0', 'm1', 'm2', 'm3']):
                 else:
                     print(f'{" "*6}Method {m} had {new_inst_no+1} valid, {missing_inst_no} missing, and {error_inst_no} in error instances')
                             
-    return losses, weights, scores_train, scores_test
+    return variances, losses, weights, scores_train, scores_test
 
 ### Reads in all methods records from the log folder
 def logs_to_data(log_path, methods=['m0', 'm1', 'm2', 'm3']):
