@@ -5,6 +5,8 @@ from qiskit.primitives import Estimator
 from qiskit_algorithms.gradients import ParamShiftEstimatorGradient
 from matplotlib import pyplot as plt
 
+from Components.utils import *
+
 from GLOBAL_CONFIG import *
 
 
@@ -140,3 +142,41 @@ def getVariance(data:list[float|np.float64], num_qubits:list[int]):
     plt.legend(loc='best')
 
     return variance
+
+def plotMeanVariance(data:list[float|np.float64], num_qubits:list[int], smooth_weight=0):
+    '''
+    Plot the variance of the gradient obtained in batch data.
+
+    Args: 
+        data - the given data, can be obtained from function getVariance()
+
+        num_qubits - range of number of qubits, eg. range(2, MAX_QUBITS)
+
+        smooth_weight - within range [0, 1], apply smooth to graph, can cause information loss
+
+    '''
+
+    color = {
+        'm1': 'tab:blue', 
+        'm2': 'tab:orange' ,
+        'm3': 'tab:green', 
+        'm4':'tab:red'
+        }
+    for c in data:
+        select = pd.DataFrame(np.reshape(data[c], (len(data[c]), data[c][0].shape[1])))
+        
+        max = smooth(select.max(), smooth_weight)
+        min = smooth(select.min(), smooth_weight)
+        mean = smooth(select.mean(), smooth_weight)
+
+        fit = np.polyfit(num_qubits, np.log(mean), deg=1)
+
+        plt.semilogy(range(0, select.shape[1]), mean, color = color[c], label=f'Method {c} Variance, exp fit w/ {fit[0]:.2f}')
+
+        plt.fill_between(range(0, select.shape[1]), max, min, color = color[c], alpha = 0.2)
+    
+    # plt.ylim(0.2, 1.1)
+    plt.title('Gradient Variances vs Qubits')
+    plt.xlabel('Qubits')
+    plt.ylabel('Var')
+    plt.legend(loc='lower right')

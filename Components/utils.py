@@ -118,19 +118,24 @@ def plot_objfn_range(objective_fn, smooth_weight=0, d = None, xlabel='Iterations
     plt.title(title)
     plt.legend(loc='best')
 
-def plot_score_range(scores, smooth_weight=0, xlabel='Iterations', ylabel='Score', title='Loss Function vs Iteration'):
-    color = ['tab:blue', 'tab:orange' ,'tab:green', 'tab:red']
-
-    for c in range(len(scores)):
-        select = scores[c]
+def plot_score_range(scores, smooth_weight=0, xlabel='Iterations', ylabel='Score', title='Scores vs Iteration'):
+    color = {
+        'm1': 'tab:blue', 
+        'm2': 'tab:orange' ,
+        'm3': 'tab:green', 
+        'm4':'tab:red'
+        }
+    for c in scores:
+        select = pd.DataFrame(np.reshape(scores[c], (len(scores[c]), scores[c][0].shape[1])))
+        
         max = smooth(select.max(), smooth_weight)
         min = smooth(select.min(), smooth_weight)
         mean = smooth(select.mean(), smooth_weight)
         
 
-        plt.plot(range(0, scores[c].shape[1]), mean, color = color[c], label=f'Method {c} Average')
+        plt.plot(range(0, select.shape[1]), mean, color = color[c], label=f'Method {c} Average')
 
-        plt.fill_between(range(0, scores[c].shape[1]), max, min, color = color[c], alpha = 0.2)
+        plt.fill_between(range(0, select.shape[1]), max, min, color = color[c], alpha = 0.2)
     
     plt.ylim(0.2, 1.1)
     plt.title(title)
