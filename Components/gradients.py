@@ -171,12 +171,13 @@ def plotMeanVariance(data:list[float|np.float64], num_qubits:list[int], smooth_w
 
         fit = np.polyfit(num_qubits, np.log(mean), deg=1)
 
-        plt.semilogy(range(0, select.shape[1]), mean, color = color[c], label=f'Method {c} Variance, exp fit w/ {fit[0]:.2f}')
+        plt.semilogy(num_qubits, mean, color = color[c], label=f'Method {c} Variance, exp fit w/ {fit[0]:.2f}')
 
-        plt.fill_between(range(0, select.shape[1]), max, min, color = color[c], alpha = 0.2)
+        plt.fill_between(num_qubits, max, min, color = color[c], alpha = 0.2)
     
     # plt.ylim(0.2, 1.1)
     plt.title('Gradient Variances vs Qubits')
     plt.xlabel('Qubits')
+    plt.xticks(num_qubits)
     plt.ylabel('Var')
-    plt.legend(loc='lower right')
+    plt.legend(loc='best')
