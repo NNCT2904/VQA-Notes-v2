@@ -17,6 +17,8 @@ qiskit = {extras = ["visualization"], version = "*"}
 pandas = "*"
 torchsummary = "*"
 qiskit-aer = "*"
+pylatexenc = "*"
+qiskit-qulacs = {git = "git+https://github.com/Gopal-Dahale/qiskit-qulacs.git"}
 
 [dev-packages]
 autopep8 = "*"
