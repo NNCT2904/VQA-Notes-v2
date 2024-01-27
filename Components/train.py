@@ -93,5 +93,5 @@ def train(model: TorchConnector, epochs:int, X_train :tensor, y_train:tensor, X_
         optimizer.step()
         
         if (epoch % 10 == 0) or (epoch+1 == max_epochs):
-            print ("{:<10} {:<20} {:<16} {:<16}".format(f'[ {epoch} ]', loss.detach().flatten()[0].numpy().round(5), a_train.round(5), a_test.round(5)))
+            print ("{:<10} {:<20} {:<16} {:<16}".format(f'[ {epoch} ]', loss.detach().flatten()[0].numpy().round(5), round(a_train, 5), round(a_test, 5)))
     return model, losses, accuracy_train, accuracy_test, weights
