@@ -19,6 +19,7 @@ torchsummary = "*"
 qiskit-aer = "*"
 pylatexenc = "*"
 qiskit-qulacs = {git = "git+https://github.com/Gopal-Dahale/qiskit-qulacs.git"}
+ipympl = "*"
 
 [dev-packages]
 autopep8 = "*"

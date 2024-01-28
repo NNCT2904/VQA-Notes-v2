@@ -4,6 +4,10 @@ import qiskit.primitives
 from qiskit.primitives import Estimator
 from qiskit_algorithms.gradients import ParamShiftEstimatorGradient
 from matplotlib import pyplot as plt
+from qiskit_machine_learning.connectors import TorchConnector
+import torch
+from torch import tensor, optim
+import copy
 
 from Components.utils import *
 
@@ -181,3 +185,16 @@ def plotMeanVariance(data:list[float|np.float64], num_qubits:list[int], smooth_w
     plt.xticks(num_qubits)
     plt.ylabel('Var')
     plt.legend(loc='best')
+
+def sampleWeightLoss(model: TorchConnector, X_train :tensor, y_train:tensor, optimizer: optim.Optimizer, loss_function:torch.nn.modules.loss._Loss):
+        
+    # zero the parameter gradients
+    optimizer.zero_grad()
+    outp = model(X_train)
+    loss = loss_function(outp.flatten(), y_train)
+
+    # log result
+    loss = loss.detach().flatten()[0]
+    weight = copy.deepcopy(model.weight.data)
+
+    return loss, weight
