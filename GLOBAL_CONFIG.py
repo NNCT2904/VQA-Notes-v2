@@ -10,14 +10,14 @@ import numpy as np
 
 '''Configure Dataset'''
 DATA_SIZE = 500
-FEATURE_DIM = 4
+FEATURE_DIM = 2
 MAX_ITER = 100
 MAX_INST = 10
 
 '''Configure Quantum Circuit properties'''
-MAX_QUBITS = 12
-MAX_QUBITS_CLASSIFICATION = 8
-MAX_REPS = 12
+MAX_QUBITS = 4
+MAX_QUBITS_CLASSIFICATION = 2
+MAX_REPS = 0
 MIN_REPS = 2
 MAX_IDENTITIES_BLOCKS = 3  # <---- Number of identity blocks, depth values of identity blocks is close to that of normal ansatz 
 IDENTITY_BLOCKS_OVERLAY = 3

@@ -6,7 +6,7 @@ import pandas as pd
 
 from qiskit_machine_learning.algorithms.classifiers import NeuralNetworkClassifier
 from sklearn.model_selection import KFold
-from qiskit.algorithms.optimizers import COBYLA, NELDER_MEAD, SLSQP, SPSA
+from qiskit_algorithms.optimizers import COBYLA, NELDER_MEAD, SLSQP, SPSA
 
 from typing import List
 

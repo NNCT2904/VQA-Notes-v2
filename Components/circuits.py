@@ -1,13 +1,16 @@
 import numpy as np
 from qiskit.circuit import QuantumCircuit, Parameter
-from qiskit.opflow import PauliExpectation, CircuitSampler, StateFn, Gradient, Z, X, I
+# from qiskit.opflow import PauliExpectation, CircuitSampler, StateFn, Gradient, Z, X, I
+
+# from qiskit.quantum_info import Z, X, I
 
 from qiskit.primitives import Estimator, Sampler
 from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
 from qiskit.quantum_info import SparsePauliOp, Statevector
-from qiskit.algorithms.gradients import ParamShiftEstimatorGradient
-from qiskit.algorithms import optimizers
-from qiskit.algorithms.optimizers import COBYLA
+
+from qiskit_algorithms.gradients import ParamShiftEstimatorGradient
+from qiskit_algorithms import optimizers
+from qiskit_algorithms.optimizers import COBYLA
 
 from GLOBAL_CONFIG import *
 
@@ -268,54 +271,54 @@ def LayerwiseTrainingPrimitives(ansatz: QuantumCircuit, max_num_layers: int, opt
 
     return optimal_parameters
 
-def LLMinimize(circuit, optimizer, q_instance):
-    initial_point = np.zeros(circuit.num_parameters)
+# def LLMinimize(circuit, optimizer, q_instance):
+#     initial_point = np.zeros(circuit.num_parameters)
 
-    operator = (I ^ (circuit.num_qubits-2)) ^ (Z ^ 2)
+#     operator = (I ^ (circuit.num_qubits-2)) ^ (Z ^ 2)
 
-    expectation = StateFn(operator, is_measurement=True) @ StateFn(circuit)
-    grad = Gradient().convert(expectation)
+#     expectation = StateFn(operator, is_measurement=True) @ StateFn(circuit)
+#     grad = Gradient().convert(expectation)
 
-    # Pauli basis
-    expectation = PauliExpectation().convert(expectation)
-    grad = PauliExpectation().convert(grad)
+#     # Pauli basis
+#     expectation = PauliExpectation().convert(expectation)
+#     grad = PauliExpectation().convert(grad)
 
-    sampler = CircuitSampler(q_instance, caching='all')
+#     sampler = CircuitSampler(q_instance, caching='all')
 
-    def loss(x):
-        values = dict(zip(circuit.parameters, x))
-        return np.real(sampler.convert(expectation, values).eval())
+#     def loss(x):
+#         values = dict(zip(circuit.parameters, x))
+#         return np.real(sampler.convert(expectation, values).eval())
 
-    def gradient(x):
-        values = dict(zip(circuit.parameters, x))
-        return np.real(sampler.convert(grad, values).eval())
+#     def gradient(x):
+#         values = dict(zip(circuit.parameters, x))
+#         return np.real(sampler.convert(grad, values).eval())
 
-    return optimizer.minimize(loss, jac=gradient, x0=initial_point)
+#     return optimizer.minimize(loss, jac=gradient, x0=initial_point)
 
 
-def LLMinimize_old(circuit, optimizer, q_instance):
-    initial_point = np.zeros(circuit.num_parameters)
+# def LLMinimize_old(circuit, optimizer, q_instance):
+#     initial_point = np.zeros(circuit.num_parameters)
 
-    operator = (I ^ (circuit.num_qubits-2)) ^ (Z ^ 2)
+#     operator = (I ^ (circuit.num_qubits-2)) ^ (Z ^ 2)
 
-    expectation = StateFn(operator, is_measurement=True) @ StateFn(circuit)
-    grad = Gradient().convert(expectation)
+#     expectation = StateFn(operator, is_measurement=True) @ StateFn(circuit)
+#     grad = Gradient().convert(expectation)
 
-    # Pauli basis
-    expectation = PauliExpectation().convert(expectation)
-    grad = PauliExpectation().convert(grad)
+#     # Pauli basis
+#     expectation = PauliExpectation().convert(expectation)
+#     grad = PauliExpectation().convert(grad)
 
-    sampler = CircuitSampler(q_instance, caching='all')
+#     sampler = CircuitSampler(q_instance, caching='all')
 
-    def loss(x):
-        values = dict(zip(circuit.parameters, x))
-        return np.real(sampler.convert(expectation, values).eval())
+#     def loss(x):
+#         values = dict(zip(circuit.parameters, x))
+#         return np.real(sampler.convert(expectation, values).eval())
 
-    def gradient(x):
-        values = dict(zip(circuit.parameters, x))
-        return np.real(sampler.convert(grad, values).eval())
+#     def gradient(x):
+#         values = dict(zip(circuit.parameters, x))
+#         return np.real(sampler.convert(grad, values).eval())
 
-    return optimizer.minimize(loss, jac=gradient, x0=initial_point)
+#     return optimizer.minimize(loss, jac=gradient, x0=initial_point)
 
 
 def layerwise_training(ansatz:QuantumCircuit, max_num_layers:int, optimizer:optimizers, q_instance):

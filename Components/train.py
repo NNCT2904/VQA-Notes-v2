@@ -1,7 +1,7 @@
 import numpy as np
 
-from qiskit.algorithms.optimizers import COBYLA
-from qiskit.opflow import Gradient
+# from qiskit.algorithms.optimizers import COBYLA
+# from qiskit.opflow import Gradient
 from qiskit_machine_learning.neural_networks import EstimatorQNN
 from qiskit_machine_learning.algorithms.classifiers import NeuralNetworkClassifier
 from qiskit.quantum_info import SparsePauliOp

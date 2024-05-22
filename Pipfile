@@ -20,6 +20,8 @@ qiskit-aer = "*"
 pylatexenc = "*"
 qiskit-qulacs = {git = "git+https://github.com/Gopal-Dahale/qiskit-qulacs.git"}
 ipympl = "*"
+umap-learn = "*"
+qiskit-algorithms = "*"
 
 [dev-packages]
 autopep8 = "*"
